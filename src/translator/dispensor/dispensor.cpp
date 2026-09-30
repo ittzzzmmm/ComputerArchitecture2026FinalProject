@@ -1,7 +1,10 @@
 #include "dispensor.h"
 
-Dispensor::Dispensor(const std::string& file){
-    assemblyFile.open(file);
+Dispensor::Dispensor(const std::string& filePath){
+    assemblyFile.open(filePath);
+    if(!assemblyFile.is_open()){
+        throw std::runtime_error("Cannot open assembly file : "+ filePath);
+    }
 }
 bool Dispensor::hasNext(){
     return !assemblyFile.eof();
