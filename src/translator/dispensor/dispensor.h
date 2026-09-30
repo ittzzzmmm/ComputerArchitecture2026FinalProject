@@ -10,7 +10,7 @@ class Dispensor{
         std::ifstream assemblyFile;
     public:
         //constructor function
-        Dispensor(const std::string& filename);
+        Dispensor(const std::string& filePath);
         bool hasNext();
         std::string nextInstruction();
 };
