@@ -13,6 +13,7 @@ class Dispensor{
         Dispensor(const std::string& filePath);
         bool hasNext();
         std::string nextInstruction();
+        void reset();
 };
 
 #endif

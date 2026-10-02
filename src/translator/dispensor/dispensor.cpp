@@ -17,3 +17,8 @@ std::string Dispensor::nextInstruction(){
     }
     return "";
 }
+
+void Dispensor::reset(){
+    assemblyFile.clear(); // Clear EOF flag
+    assemblyFile.seekg(0); // Move pointer to beginning of file
+}
