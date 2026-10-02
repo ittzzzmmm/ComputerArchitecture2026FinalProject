@@ -8,11 +8,13 @@ class Dispensor{
     private: 
         //instance
         std::ifstream assemblyFile;
+        int currentLine=0;
     public:
         //constructor function
         Dispensor(const std::string& filePath);
         bool hasNext();
         std::string nextInstruction();
+        int getCurrentLine();
         void reset();
 };
 

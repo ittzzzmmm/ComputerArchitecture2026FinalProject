@@ -13,12 +13,19 @@ bool Dispensor::hasNext(){
 std::string Dispensor::nextInstruction(){
     std::string instruction;
     if (std::getline(assemblyFile, instruction)) {
+        currentLine++;
         return instruction;
     }
     return "";
 }
 
+int Dispensor::getCurrentLine() {
+    return currentLine;
+}
+
+
 void Dispensor::reset(){
     assemblyFile.clear(); // Clear EOF flag
     assemblyFile.seekg(0); // Move pointer to beginning of file
+    currentLine = 0; // Reset current line number
 }
