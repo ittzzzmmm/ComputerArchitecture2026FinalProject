@@ -16,6 +16,8 @@ std::string Encoder::encodeInstruction(const std::string buffer[],const std::map
         return encodeOType(buffer[1]);
     }else if(buffer[1]==".fill"){
         return encodeDotFill(buffer[2]);
+    }else{
+        throw std::runtime_error("Invalid instruction : ' "+ buffer[1] + " ' in line " + std::to_string(pc));
     }
     return "";
 }
