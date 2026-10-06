@@ -9,16 +9,17 @@ int main(int argc,char *argv[]){
         if(argc!=3){
             throw std::invalid_argument("Arguments count must equal to 3");
         }
+        std::string inputFilePath = argv[1];
+        std::string outputFilePath = argv[2];
+        Translator translator(inputFilePath,outputFilePath);
+        std::string res = translator.translate();
+        
+        std::cout<<res<<std::endl;
     }
     catch(const std::exception& e)
     {
         std::cerr << e.what() << '\n';
         return 0;
     }
-    std::string inputFilePath = argv[1];
-    std::string outputFilePath = argv[2];
-    Translator translator(inputFilePath,outputFilePath);
-    std::string res = translator.translate();
-    
-    std::cout<<res<<std::endl;
+    return 0;
 }
