@@ -4,6 +4,7 @@
 #include "src/translator/translator.h"
 
 int main(int argc,char *argv[]){
+    Translator* translator = nullptr;
     try
     {   //invalid_input handler
         if(argc!=3){
@@ -11,15 +12,19 @@ int main(int argc,char *argv[]){
         }
         std::string inputFilePath = argv[1];
         std::string outputFilePath = argv[2];
-        Translator translator(inputFilePath,outputFilePath);
-        std::string res = translator.translate();
+        Translator t(inputFilePath,outputFilePath);
+        translator = &t;
+        std::string res = translator->translate();
         
         std::cout<<res<<std::endl;
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
-        return 0;
+        std::cerr << e.what();
+        if(translator != nullptr){
+            std::cerr <<"At line # " << translator->getCurrentLine() <<  '\n';
+        }
+        return 1;
     }
     return 0;
 }
