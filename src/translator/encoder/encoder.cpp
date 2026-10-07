@@ -31,7 +31,7 @@ std::string Encoder::encodeRType(const std::string regA,const std::string regB,c
     }else{
 
     }
-
+    // register validation , range int 0 - 7 inclusive.
     validateRegister(regA);
     validateRegister(regB);
     validateRegister(desReg);
@@ -51,11 +51,19 @@ std::string Encoder::encodeIType(const std::string regA,const std::string regB,c
         result+="011";
     }else if(instruction=="beq"){
         result+="100";
+        // register validation , range int 0 - 7 inclusive.
+        validateRegister(regA);
+        validateRegister(regB);
+
         result+= std::bitset<3>(std::stoi(regA)).to_string();
         result+= std::bitset<3>(std::stoi(regB)).to_string();
         if(isNumber(offset)){
             result+= std::bitset<16>(std::stoi(offset)).to_string();
         }else{
+            auto it = table.find(offset);
+            if(it == table.end()){
+                throw std::runtime_error("UNDEFINED SYMBOL : Undefined Symbol ' "+offset+" ' found.");
+            }
             result+= std::bitset<16>(table[offset]-pc).to_string();
         }
         return result;
@@ -63,11 +71,19 @@ std::string Encoder::encodeIType(const std::string regA,const std::string regB,c
 
     }
 
+    // register validation , range int 0 - 7 inclusive.
+    validateRegister(regA);
+    validateRegister(regB);
+
     result+= std::bitset<3>(std::stoi(regA)).to_string();
     result+= std::bitset<3>(std::stoi(regB)).to_string();
     if(isNumber(offset)){
         result+= std::bitset<16>(std::stoi(offset)).to_string();
     }else{
+        auto it = table.find(offset);
+        if(it == table.end()){
+            throw std::runtime_error("UNDEFINED SYMBOL : Undefined Symbol ' "+offset+" ' found.");
+        }
         result+= std::bitset<16>(table[offset]).to_string();
     }
     return result;
