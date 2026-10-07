@@ -23,6 +23,9 @@ class Translator{
         void resetBuffer();
         void showSymbolTable();
         void exportAsMachineCodeFile(const std::string& inputFilePath,const std::string& outputFilePath);
+        int getCurrentLine();
+        bool validateSymbol(std::string symbol);
+
 };
 
 #endif

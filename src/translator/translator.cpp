@@ -1,5 +1,6 @@
 #include "translator.h"
 #include<fstream>
+#include<regex>
 Translator::Translator(
     const std::string& inputFilePath,
     const std::string& outputFilePath
@@ -41,16 +42,14 @@ void Translator::createSymbolTable(){
     while(dispensor.hasNext()){
         std::string instruction = dispensor.nextInstruction();
         std::stringstream ss(instruction);
-        std::string token;
-        int i=0;
-        while(getline(ss, token, '\t')){
-            buffer[i++] = token;
-        }
-        if(buffer[0]!=""){
-            symbolTable[buffer[0]] = dispensor.getCurrentLine()-1;
+        std::string symbol;
+        getline(ss, symbol, '\t');
+
+        if(symbol!=""){
+            validateSymbol(symbol);
+            symbolTable[symbol] = dispensor.getCurrentLine()-1;
             //std::cout<< "Symbol Table Entry: " << buffer[0] << " -> Address = " << symbolTable[buffer[0]] << std::endl;
         }
-        resetBuffer();
     }
     dispensor.reset();
 }
@@ -75,4 +74,19 @@ void Translator::exportAsMachineCodeFile(const std::string& inputFilePath, const
     machineCodeFile << mcBuffer;
     std::cout<<mcBuffer;
     machineCodeFile.close();
-}   
+}  
+
+bool Translator::validateSymbol(std::string symbol){
+    std::regex symbolRegex("^[A-Za-z][A-Za-z0-9]{0,5}$");// first, alphabet. 5 left , alphabel or number 
+    if(symbol.size()>6){
+        throw std::runtime_error("INVALID LABEL : Label must have not more than 6 characters. At line # "+std::to_string(dispensor.getCurrentLine())+'\n');
+    }else if(!std::regex_match(symbol,symbolRegex)){
+        throw std::runtime_error("INVALID LABEL : Label format is not match. At line # "+std::to_string(dispensor.getCurrentLine())+'\n');
+    }
+
+    return true;
+}
+
+int Translator::getCurrentLine(){
+    return dispensor.getCurrentLine();
+}
