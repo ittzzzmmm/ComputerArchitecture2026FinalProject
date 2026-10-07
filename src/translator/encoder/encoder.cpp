@@ -58,11 +58,15 @@ std::string Encoder::encodeIType(const std::string regA,const std::string regB,c
         result+= std::bitset<3>(std::stoi(regA)).to_string();
         result+= std::bitset<3>(std::stoi(regB)).to_string();
         if(isNumber(offset)){
+            int offsetInt = std::stoi(offset);
+            if(offsetInt < -32768 ||  offsetInt > 32767){
+                throw std::runtime_error("INVALID OFFSET : Offset must be in range [ -32768 , 32767 ]. ");
+            }
             result+= std::bitset<16>(std::stoi(offset)).to_string();
         }else{
             auto it = table.find(offset);
             if(it == table.end()){
-                throw std::runtime_error("UNDEFINED SYMBOL : Undefined Symbol ' "+offset+" ' found.");
+                throw std::runtime_error("UNDEFINED SYMBOL : Undefined Symbol ' "+offset+" ' not found. ");
             }
             result+= std::bitset<16>(table[offset]-pc).to_string();
         }
@@ -78,11 +82,16 @@ std::string Encoder::encodeIType(const std::string regA,const std::string regB,c
     result+= std::bitset<3>(std::stoi(regA)).to_string();
     result+= std::bitset<3>(std::stoi(regB)).to_string();
     if(isNumber(offset)){
+        int offsetInt = std::stoi(offset);
+        //offset validation , range int [ -32768 , 32767 ].
+        if(offsetInt < -32768 ||  offsetInt > 32767){
+            throw std::runtime_error("INVALID OFFSET : Offset must be in range [ -32768 , 32767 ]. ");
+        }
         result+= std::bitset<16>(std::stoi(offset)).to_string();
     }else{
         auto it = table.find(offset);
         if(it == table.end()){
-            throw std::runtime_error("UNDEFINED SYMBOL : Undefined Symbol ' "+offset+" ' found.");
+            throw std::runtime_error("UNDEFINED SYMBOL : Undefined Symbol ' "+offset+" ' not found.");
         }
         result+= std::bitset<16>(table[offset]).to_string();
     }
@@ -92,8 +101,12 @@ std::string Encoder::encodeIType(const std::string regA,const std::string regB,c
 std::string Encoder::encodeJType(const std::string regA,const std::string regB){
     std::string result = "0000000";
     result+="101";
+    // register validation , range int 0 - 7 inclusive.
+    validateRegister(regA);
+    validateRegister(regB);
     result+= std::bitset<3>(std::stoi(regA)).to_string();
     result+= std::bitset<3>(std::stoi(regB)).to_string();
+    result+= "0000000000000000";
 
     return result;
 }
@@ -112,11 +125,21 @@ std::string Encoder::encodeOType(const std::string instruction){
 
 std::string Encoder::encodeDotFill(std::string value){
     if(isNumber(value)){
+        int valueInt = std::stoi(value);
+        if(valueInt < -32768 || valueInt > 32767){
+            throw std::runtime_error("INVALID VALUE : .fill must be in range [ -32768 , 32767 ]. ");
+        }
         return std::bitset<32>(std::stoi(value)).to_string();
     }else{
+        auto it = table.find(value);
+        if(it == table.end()){
+            throw std::runtime_error("UNDEFINED SYMBOL : Undefined Symbol ' "+value+" ' not found. ");
+        }
         return std::bitset<32>(table[value]).to_string();
     }
 }
+
+// helper functions
 
 bool Encoder::isNumber(const std::string str){
     try {
@@ -133,12 +156,9 @@ void Encoder::showSymbolTable(){
         std::cout<< item.first<< " -> " << item.second << std::endl;
     }
 }
-// std::string Encoder::decimalToBinaryStr(const std::string decimal,const unsigned long long bitLength){
-//     int value = std::stoi(decimal);
-//     return std::bitset<3>(value).to_string();
-// }
 
 bool Encoder::validateRegister(std::string regStr){
+
     if(!isNumber(regStr)){
         throw std::runtime_error("INVALID REGISTER : Register must be an integer. ");
     }
