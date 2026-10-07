@@ -17,7 +17,7 @@ std::string Encoder::encodeInstruction(const std::string buffer[],const std::map
     }else if(buffer[1]==".fill"){
         return encodeDotFill(buffer[2]);
     }else{
-        throw std::runtime_error("Invalid instruction : ' "+ buffer[1] + " ' in line " + std::to_string(pc));
+        throw std::runtime_error("INVALID INSTRUCTION : Instrunction ' "+ buffer[1]+" ' found. ");
     }
     return "";
 }
@@ -32,6 +32,10 @@ std::string Encoder::encodeRType(const std::string regA,const std::string regB,c
 
     }
 
+    validateRegister(regA);
+    validateRegister(regB);
+    validateRegister(desReg);
+    
     result+= std::bitset<3>(std::stoi(regA)).to_string();
     result+= std::bitset<3>(std::stoi(regB)).to_string();
     result+= "0000000000000";
@@ -117,3 +121,13 @@ void Encoder::showSymbolTable(){
 //     int value = std::stoi(decimal);
 //     return std::bitset<3>(value).to_string();
 // }
+
+bool Encoder::validateRegister(std::string regStr){
+    if(!isNumber(regStr)){
+        throw std::runtime_error("INVALID REGISTER : Register must be an integer. ");
+    }
+    if(std::stoi(regStr) < 0 || std::stoi(regStr) > 7){
+        throw std::runtime_error("INVALID REGISTER : Register must be in range [0 , 7]. ");
+    }
+    return true;
+}

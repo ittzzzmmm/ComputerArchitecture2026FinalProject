@@ -21,7 +21,7 @@ class Encoder{
         //std::string decimalToBinaryStr(const std::string decimal,const unsigned long long bitLength);
         bool isNumber(const std::string str);
         void showSymbolTable();
-
+        bool validateRegister(std::string regStr);
 };
 
 #endif
