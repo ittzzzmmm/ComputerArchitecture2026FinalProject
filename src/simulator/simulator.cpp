@@ -2,8 +2,9 @@
 
 /* instruction-level simulator */
 
-#include <simulator.h>
+#include "simulator.h"
 #include <bitset>
+#include <iostream>
 
 void printState(stateType *statePtr)
 {
@@ -22,28 +23,38 @@ void printState(stateType *statePtr)
 }
 
 
-void runSimulator (stateType &statePtr){
+// for testing
+void add(){
+    std::cout<< "add called\n";
+}
+
+
+
+void runSimulator (stateType *statePtr){
     bool isHalted = false;
 
-    // initial program counter
-    statePtr.pc = 0;
+    // instructions counter
+    int counter = 0;
+
+    // initial pc
+    statePtr->pc = 0;
 
     // initial registers
     for(int i=0; i<NUMREGS ;i++){
-        statePtr.reg[i]=0;
+        statePtr->reg[i]=0;
     }
 
     while(!isHalted){
-        printState(&statePtr);
+        printState(statePtr);
         
         // 1. fetch state.mem
-        int instruction = statePtr.mem[statePtr.pc];    
+        int instruction = statePtr->mem[statePtr->pc];    
         
         // 2. decode
         // Bits 24-22 opcode 
         int opcode = (instruction >> 22) & 7 ;   
 
-        // 3. call (execute) by bew
+        // 3. call (execute by bew)
 
         switch (opcode){
             // add R-type
@@ -51,6 +62,10 @@ void runSimulator (stateType &statePtr){
             int regA = (instruction >> 19) & 7 ; 
             int regB = (instruction >> 16) & 7 ;
             int destReg = instruction & 7 ;
+
+            /* test */
+                add();
+                statePtr->pc++;
 
             // add(regA,regB,destReg,statePtr)
         } break;
@@ -108,6 +123,7 @@ void runSimulator (stateType &statePtr){
             // halt O-type
         case 6:
             isHalted = true;
+            statePtr->pc++;
             break;
         
 
@@ -119,10 +135,16 @@ void runSimulator (stateType &statePtr){
         
         }
         
-        // 4. update (pc++ , reg) done in each function
+        // 4. update counter (pc,reg) done in each function
+        counter++; 
     }
 
     if(isHalted){
-        printState(&statePtr);
+        std::cout<< "machine halted\n";
+        std::cout<< "total of " << counter << " instructions executed\n" ;
+        std::cout<< "final state of machine:\n";
+
+        printState(statePtr);
     }
+
 }

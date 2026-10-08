@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 
-#include <simulator.h>
+#include "simulator.h"
 
 using namespace std;
 
@@ -39,11 +39,11 @@ int main(int argc, char *argv[])
 
 
     // simulator called
-    runSimulator(state);
+    runSimulator(&state);
 
 
 
 
-    return(0);
+    return 0 ;
 }
 

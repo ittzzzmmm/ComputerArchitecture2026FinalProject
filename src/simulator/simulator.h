@@ -12,6 +12,8 @@ typedef struct stateStruct {
     int numMemory;
 } stateType;
 
-void printState(stateType *){}
+void printState(stateType *);
 
-void runSimulator(stateType){}
+void runSimulator(stateType *);
+
+void add();
