@@ -1,29 +1,20 @@
- lw 2 1 n 
- beq 2 1 halt 
- lw 0 6 pos1
- add 3 6 3 
- add 2 6 2 
- beq 2 1 halt 
-fibo sw 5 4 stack 
- add 5 6 5 
- sw 5 3 stack 
- lw 5 4 stack 
- add 0 0 5 
- lw 5 7 stack 
- add 3 7 3 
- add 2 6 2 
- beq 2 1 halt 
- beq 0 0 fiboAddr
-pos1 .fill 1
-fiboAddr .fill fibo
-stack .fill 0
-n .fill nInput
-
-0 = 0
-1 = n
-2 = count
-3 = return func
-4 = local val
-5 = pointer
-6 = 1
-7 = temp
+	lw	0	1	n	
+	beq	2	1	halt	
+	lw	0	6	pos1	
+	add	3	6	3	
+	add	2	6	2	
+	beq	2	1	halt	
+fibo	sw	5	4	stack	
+	add	0	6	5	
+	sw	5	3	stack	
+	lw	5	4	stack	
+	add	0	0	5	
+	lw	5	4	stack	
+	add	3	7	3	
+	add	2	6	2	
+	beq	2	1	halt	
+	beq	0	0	fibo	
+pos1	.fill	6			
+n	.fill	6			
+stack	.fill	0			
+	.fill	0			
