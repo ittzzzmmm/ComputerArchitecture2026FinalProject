@@ -126,7 +126,7 @@ std::string Encoder::encodeOType(const std::string instruction){
 std::string Encoder::encodeDotFill(std::string value){
     if(isNumber(value)){
         int valueInt = std::stoi(value);
-        if(valueInt < -32768 || valueInt > 32767){
+        if(valueInt < -2147483648 || valueInt > 2147483647){
             throw std::runtime_error("INVALID VALUE : .fill must be in range [ -32768 , 32767 ]. ");
         }
         return std::bitset<32>(std::stoi(value)).to_string();
