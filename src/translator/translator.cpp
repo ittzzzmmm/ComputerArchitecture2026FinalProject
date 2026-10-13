@@ -21,11 +21,15 @@ std::string Translator::translate(){
         std::stringstream ss(instruction);
         std::string token;
         int i=0;
-        while(getline(ss, token, '\t')){
-            buffer[i++] = token;
+        if (!instruction.empty() && isspace(instruction[0])){
+            buffer[i++] = "";
+        }
+        while(ss >> token){
+            buffer[i++]=token;
+            if(i==5)break;
         }
 
-        std::string res = encoder.encodeInstruction(buffer,symbolTable,dispensor.getCurrentLine());
+        std::string res = encoder.encodeInstruction(buffer,dispensor.getCurrentLine());
         int32_t machineCode = static_cast<int32_t>(static_cast<uint32_t>(std::bitset<32>(res).to_ulong()));
         mcBuffer += std::to_string(machineCode) + '\n';
         resetBuffer();
@@ -43,13 +47,13 @@ void Translator::createSymbolTable(){
         std::string instruction = dispensor.nextInstruction();
         std::stringstream ss(instruction);
         std::string symbol;
-        getline(ss, symbol, '\t');
-
-        if(symbol!=""){
-            validateSymbol(symbol);
-            symbolTable[symbol] = dispensor.getCurrentLine()-1;
-            //std::cout<< "Symbol Table Entry: " << buffer[0] << " -> Address = " << symbolTable[buffer[0]] << std::endl;
+        if(!instruction.empty() && isspace(instruction[0])){ // not empty, start with whitespace
+            continue;
         }
+        ss >> symbol;
+        validateSymbol(symbol);
+        symbolTable[symbol] = dispensor.getCurrentLine()-1;
+        //std::cout<< "Symbol Table Entry: " << buffer[0] << " -> Address = " << symbolTable[buffer[0]] << std::endl;
     }
     dispensor.reset();
 }
