@@ -50,20 +50,17 @@ void runSimulator(stateType *statePtr)
         int instruction = statePtr->mem[statePtr->pc];
 
         // 2. decode
-        // Bits 24-22 opcode
-        int opcode = (instruction >> 22) & 7;
-
-        // 3. call (execute by bew)
+        int opcode = (instruction >> 22) & 7;  // Bits 24-22 opcode
+        int regA = (instruction >> 19) & 7;    // Bits 21-19 regA
+        int regB = (instruction >> 16) & 7;    // Bits 18-16 regB
+        int destReg = instruction & 7;         // Bits 2-0 destReg
+        int offsetField = instruction & 65535; // Bits 15-0 offset
 
         switch (opcode)
         {
         // add R-type
         case 0:
         {
-            int regA = (instruction >> 19) & 7;
-            int regB = (instruction >> 16) & 7;
-            int destReg = instruction & 7;
-
             add(regA, regB, destReg, statePtr);
         }
         break;
@@ -71,10 +68,6 @@ void runSimulator(stateType *statePtr)
         // nand R-type
         case 1:
         {
-            int regA = (instruction >> 19) & 7;
-            int regB = (instruction >> 16) & 7;
-            int destReg = instruction & 7;
-
             nand(regA, regB, destReg, statePtr);
         }
         break;
@@ -82,10 +75,6 @@ void runSimulator(stateType *statePtr)
         // lw I-type
         case 2:
         {
-            int regA = (instruction >> 19) & 7;
-            int regB = (instruction >> 16) & 7;
-            int offsetField = instruction & 65535;
-
             lw(regA, offsetField, regB, statePtr);
         }
         break;
@@ -93,10 +82,6 @@ void runSimulator(stateType *statePtr)
         // sw I-type
         case 3:
         {
-            int regA = (instruction >> 19) & 7;
-            int regB = (instruction >> 16) & 7;
-            int offsetField = instruction & 65535;
-
             sw(regA, offsetField, regB, statePtr);
         }
         break;
@@ -104,10 +89,6 @@ void runSimulator(stateType *statePtr)
         // beq I-type
         case 4:
         {
-            int regA = (instruction >> 19) & 7;
-            int regB = (instruction >> 16) & 7;
-            int offsetField = instruction & 65535;
-
             beq(regA, offsetField, regB, statePtr);
         }
         break;
@@ -115,9 +96,6 @@ void runSimulator(stateType *statePtr)
         // jalr J-Type
         case 5:
         {
-            int regA = (instruction >> 19) & 7;
-            int regB = (instruction >> 16) & 7;
-
             jalr(regA, regB, statePtr);
         }
         break;
@@ -144,9 +122,9 @@ void runSimulator(stateType *statePtr)
 
     if (isHalted)
     {
-        std::cout << "machine halted\n";
-        std::cout << "total of " << counter << " instructions executed\n";
-        std::cout << "final state of machine:\n";
+        cout << "machine halted\n";
+        cout << "total of " << counter << " instructions executed\n";
+        cout << "final state of machine:\n";
 
         printState(statePtr);
     }
@@ -154,7 +132,7 @@ void runSimulator(stateType *statePtr)
 
 void add(int regA, int regB, int destReg, stateType *statePtr)
 {
-    if (destReg != 0)
+    if (destReg != 0) // if destReg is $0 then do not write to it, as $0 is always 0
     {
         statePtr->reg[destReg] = statePtr->reg[regA] + statePtr->reg[regB];
     }
@@ -163,7 +141,7 @@ void add(int regA, int regB, int destReg, stateType *statePtr)
 
 void nand(int regA, int regB, int destReg, stateType *statePtr)
 {
-    if (destReg != 0)
+    if (destReg != 0) // if destReg is $0 then do not write to it, as $0 is always 0
     {
         statePtr->reg[destReg] = ~(statePtr->reg[regA] & statePtr->reg[regB]);
     }
@@ -172,13 +150,13 @@ void nand(int regA, int regB, int destReg, stateType *statePtr)
 
 void lw(int regA, int offsetField, int regB, stateType *statePtr)
 {
-    if (regB != 0)
+    if (regB != 0) // if regB is $0 then do not write to it, as $0 is always 0
     {
         int offset = convertNum(offsetField);
         int address = statePtr->reg[regA] + offset;
-        if (address < 0 || address >= NUMMEMORY)
+        if (address < 0 || address >= statePtr->numMemory) // check for memory access out of bounds
         {
-            cerr << "Error: Memory address out of bounds: " << address << endl;
+            cout << "Error: lw instruction attempted to access an invalid address: " << address << endl;
             exit(1);
         }
         statePtr->reg[regB] = statePtr->mem[address];
@@ -190,9 +168,9 @@ void sw(int regA, int offsetField, int regB, stateType *statePtr)
 {
     int offset = convertNum(offsetField);
     int address = statePtr->reg[regA] + offset;
-    if (address < 0 || address >= NUMMEMORY)
+    if (address < 0 || address >= statePtr->numMemory) // check for memory access out of bounds
     {
-        cerr << "Error: Memory address out of bounds: " << address << endl;
+        cout << "Error: sw instruction attempted to access an invalid address: " << address << endl;
         exit(1);
     }
     statePtr->mem[address] = statePtr->reg[regB];
@@ -205,9 +183,9 @@ void beq(int regA, int offsetField, int regB, stateType *statePtr)
     {
         int offset = convertNum(offsetField);
         int address = statePtr->pc + offset + 1;
-        if (address < 0 || address >= NUMMEMORY)
+        if (address < 0 || address >= statePtr->numMemory) // check for memory access out of bounds
         {
-            cerr << "Error: Branch address out of bounds: " << address << endl;
+            cout << "Error: beq instruction attempted to jump to an invalid address: " << address << endl;
             exit(1);
         }
         statePtr->pc = address;
@@ -220,7 +198,7 @@ void beq(int regA, int offsetField, int regB, stateType *statePtr)
 
 void jalr(int regA, int regB, stateType *statePtr)
 {
-    if (regB != 0)
+    if (regB != 0) // if regB is $0 then do not write to it, as $0 is always 0
     {
         statePtr->reg[regB] = statePtr->pc + 1;
     }
@@ -230,9 +208,9 @@ void jalr(int regA, int regB, stateType *statePtr)
     }
     else
     {
-        if (regA < 0 || regA >= NUMREGS)
+        if (statePtr->reg[regA] < 0 || statePtr->reg[regA] >= statePtr->numMemory) // check for memory access out of bounds
         {
-            cerr << "Error: Invalid register index for jalr: " << regA << endl;
+            cout << "Error: jalr instruction attempted to jump to an invalid address: " << statePtr->reg[regA] << endl;
             exit(1);
         }
         statePtr->pc = statePtr->reg[regA];
