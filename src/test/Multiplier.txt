@@ -14,7 +14,7 @@ skip	add	2	2	2
 	add	4	4	4	
 	beq	0	0	loop	
 done	halt				
-mcand	.fill	7			ใส่เลขที่ต้องการจะคูณ
-mplier	.fill	5			
+mcand	.fill	32766			ใส่เลขที่ต้องการจะคูณ
+mplier	.fill	10383			
 count	.fill	1			
 maxbit	.fill	32768			2^15
