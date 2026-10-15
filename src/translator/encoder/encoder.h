@@ -11,7 +11,7 @@ class Encoder{
         std::map<std::string,int>& table;
     public:
         Encoder(std::map<std::string,int>& symbolTable);
-        std::string encodeInstruction(const std::string buffer[],const std::map<std::string,int>& table,const int pc);
+        std::string encodeInstruction(const std::string buffer[],const int pc);
         std::string encodeRType(const std::string regA,std::string regB,std::string desReg,std::string opcode);
         std::string encodeIType(const std::string regA,std::string regB,std::string offset,std::string opcode,const int pc);
         std::string encodeJType(const std::string regA,std::string regB);

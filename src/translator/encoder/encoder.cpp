@@ -4,7 +4,7 @@ Encoder::Encoder(std::map<std::string,int>& symbolTable): table(symbolTable){
     
 }
 
-std::string Encoder::encodeInstruction(const std::string buffer[],const std::map<std::string,int>& table,const int pc){   
+std::string Encoder::encodeInstruction(const std::string buffer[],const int pc){   
     //showSymbolTable(); 
     if(buffer[1]=="add" || buffer[1]=="nand"){
         return encodeRType(buffer[2],buffer[3],buffer[4],buffer[1]);
@@ -126,7 +126,7 @@ std::string Encoder::encodeOType(const std::string instruction){
 std::string Encoder::encodeDotFill(std::string value){
     if(isNumber(value)){
         int valueInt = std::stoi(value);
-        if(valueInt < -32768 || valueInt > 32767){
+        if(valueInt < -2147483648 || valueInt > 2147483647){
             throw std::runtime_error("INVALID VALUE : .fill must be in range [ -32768 , 32767 ]. ");
         }
         return std::bitset<32>(std::stoi(value)).to_string();
