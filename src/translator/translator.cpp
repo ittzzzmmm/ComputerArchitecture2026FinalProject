@@ -76,7 +76,6 @@ void Translator::exportAsMachineCodeFile(const std::string& inputFilePath, const
         throw std::runtime_error("cannot open output file: "+outputPath);
     }
     machineCodeFile << mcBuffer;
-    std::cout<<mcBuffer;
     machineCodeFile.close();
 }  
 
