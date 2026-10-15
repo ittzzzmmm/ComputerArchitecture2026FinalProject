@@ -82,7 +82,7 @@ void Translator::exportAsMachineCodeFile(const std::string& inputFilePath, const
 
 bool Translator::validateSymbol(std::string symbol){
     if(symbolTable.count(symbol)>0){
-        throw std::runtime_error("INVALID LABEL : duplicated label found. At libe # "+std::to_string(dispensor.getCurrentLine())+'\n');
+        throw std::runtime_error("INVALID LABEL : duplicated label ' "+symbol+" ' found. At libe # "+std::to_string(dispensor.getCurrentLine())+'\n');
     }
     std::regex symbolRegex("^[A-Za-z][A-Za-z0-9]{0,5}$");// first, alphabet. 5 left , alphabel or number 
     if(symbol.size()>6){
